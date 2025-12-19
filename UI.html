@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Student Marks Analyzer - Web Interface</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
+        .container{max-width:1100px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+        .header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:28px;text-align:center}
+        .header h1{font-size:1.8rem;margin-bottom:6px}
+        .content{padding:26px}
+        .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+        .tab{background:transparent;border:0;padding:10px 16px;border-bottom:3px solid transparent;cursor:pointer;color:#555;font-weight:600}
+        .tab.active{color:#1e3a8a;border-bottom-color:#1e3a8a}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
+        .input-section{background:#f7f9fb;padding:16px;border-radius:10px;margin-bottom:16px}
+        label{display:block;margin-bottom:6px;color:#333;font-weight:700}
+        textarea,input{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-family:inherit}
+        textarea{min-height:140px;font-family:Courier New,monospace}
+        .controls{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+        .btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}
+        .btn.secondary{background:#6c757d}
+        .small{padding:8px 10px;font-size:.9rem}
+        .results{margin-top:14px}
+        .student-card{border:1px solid #eef2ff;border-radius:10px;padding:12px;margin-bottom:12px}
+        .student-header{display:flex;justify-content:space-between;gap:12px;align-items:center}
+        .student-name{font-weight:700}
+        .subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px}
+        .subject-item{background:#fbfdff;padding:8px;border-radius:8px;border-left:4px solid #667eea}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
+        .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px;border-radius:8px;text-align:center}
+        table{width:100%;border-collapse:collapse;margin-top:12px}
+        th,td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+        .muted{color:#555}
+        .error{background:#fdecea;color:#7a1f1f;padding:10px;border-radius:8px;margin-top:10px}
+        .sample-format{background:#f8f9fa;padding:10px;border-radius:8px;font-family:Courier New,monospace;margin-top:8px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Student Marks Analyzer</h1>
+            <div class="muted">Functional Programming Project  interactive UI for CSV input</div>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" data-target="input"> Input Data</button>
+                <button class="tab" data-target="reports"> Student Reports</button>
+                <button class="tab" data-target="statistics"> Statistics</button>
+                <button class="tab" data-target="subjects"> Subject Analysis</button>
+            </div>
+
+            <div id="input" class="tab-content active">
+                <div class="input-section">
+                    <h3>Enter Student Data</h3>
+                    <p class="muted">Format per line: StudentID,Name,Subject1:Mark1,Subject2:Mark2,...</p>
+
+                    <label for="studentData">Student Data (CSV lines)</label>
+                    <textarea id="studentData" placeholder="S001,Alice John,Math:85,Physics:78,Chemistry:90
+S002,Bob Smith,Math:72,Physics:60,Chemistry:68"></textarea>
+
+                    <div class="sample-format">Example:
+S001,Alice John,Math:85,Physics:78,Chemistry:90
+S002,Bob Smith,Math:72,Physics:60,Chemistry:68
+                    </div>
+
+                    <div class="controls">
+                        <button id="parseBtn" class="btn">Parse & Generate Reports</button>
+                        <button id="clearBtn" class="btn secondary small">Clear</button>
+                        <input id="fileInput" type="file" accept=".csv" class="small" />
+                        <button id="exportBtn" class="btn small" disabled>Export JSON</button>
+                    </div>
+                    <div id="inputMsg"></div>
+                </div>
+            </div>
+
+            <div id="reports" class="tab-content">
+                <h3>Student Reports</h3>
+                <div id="reportsArea" class="results"></div>
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead><tr><th>Rank</th><th>ID</th><th>Name</th><th>Average</th><th>Grade</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="statistics" class="tab-content">
+                <h3>Statistics</h3>
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+
+            <div id="subjects" class="tab-content">
+                <h3>Subject Analysis</h3>
+                <div id="subjectsArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',e=>{
+            document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.target).classList.add('active');
+        }));
+
+        // Utility functions
+        function gradeFromAverage(avg){
+            if(avg>=85) return 'A';
+            if(avg>=70) return 'B';
+            if(avg>=55) return 'C';
+            if(avg>=40) return 'D';
+            return 'F';
+        }
+
+        function parseLines(text){
+            const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+            const students = [];
+            for(const line of lines){
+                // allow commas in name by taking first two tokens as id and name
+                const parts = line.split(',').map(p=>p.trim());
+                if(parts.length < 3) continue;
+                const id = parts[0];
+                const name = parts[1];
+                const subjects = {};
+                for(let i=2;i<parts.length;i++){
+                    const p = parts[i];
+                    const m = p.split(':').map(x=>x.trim());
+                    if(m.length!==2) continue;
+                    const subj = m[0];
+                    const mark = Number(m[1]);
+                    if(!Number.isFinite(mark)) continue;
+                    subjects[subj]=mark;
+                }
+                students.push({id,name,subjects});
+            }
+            return students;
+        }
+
+        function analyzeStudents(students){
+            // compute totals, averages, grades
+            for(const s of students){
+                const marks = Object.values(s.subjects);
+                s.total = marks.reduce((a,b)=>a+b,0);
+                s.count = marks.length || 0;
+                s.average = s.count? s.total/s.count : 0;
+                s.grade = gradeFromAverage(s.average);
+            }
+            // rank by average desc
+            students.sort((a,b)=>b.average - a.average);
+            students.forEach((s,i)=>s.rank = i+1);
+            return students;
+        }
+
+        function renderReports(students){
+            const area = document.getElementById('reportsArea');
+            const tbody = document.querySelector('#studentsTable tbody');
+            area.innerHTML=''; tbody.innerHTML='';
+            for(const s of students){
+                const card = document.createElement('div'); card.className='student-card';
+                card.innerHTML = `
+                    <div class="student-header">
+                        <div>
+                            <div class="student-name">${s.name}</div>
+                            <div class="muted">${s.id}  Avg: ${s.average.toFixed(2)}  Total: ${s.total}</div>
+                        </div>
+                        <div class="rank-badge">#${s.rank} ${s.grade}</div>
+                    </div>
+                    <div class="subjects-grid">
+                        ${Object.entries(s.subjects).map(([k,v])=>`<div class="subject-item"><div class="subject-name">${k}</div><div class="subject-mark">${v}</div></div>`).join('')}
+                    </div>
+                `;
+                area.appendChild(card);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${s.rank}</td><td>${s.id}</td><td>${s.name}</td><td>${s.average.toFixed(2)}</td><td>${s.grade}</td>`;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function renderStatistics(students){
+            const grid = document.getElementById('statsGrid'); grid.innerHTML='';
+            if(!students.length) return;
+            const averages = students.map(s=>s.average).sort((a,b)=>a-b);
+            const totalAvg = (averages.reduce((a,b)=>a+b,0)/averages.length)||0;
+            const median = averages.length%2? averages[(averages.length-1)/2] : (averages[averages.length/2-1]+averages[averages.length/2])/2;
+            const highest = Math.max(...averages);
+            const lowest = Math.min(...averages);
+            const passRate = (students.filter(s=>s.grade!=='F').length/students.length)*100;
+
+            const stats = [
+                {label:'Class Average', value: totalAvg.toFixed(2)},
+                {label:'Median', value: median.toFixed(2)},
+                {label:'Highest Avg', value: highest.toFixed(2)},
+                {label:'Lowest Avg', value: lowest.toFixed(2)},
+                {label:'Pass Rate', value: passRate.toFixed(1)+'%'},
+                {label:'Students', value: students.length}
+            ];
+
+            for(const s of stats){
+                const el = document.createElement('div'); el.className='stat-card';
+                el.innerHTML = `<div class="stat-label">${s.label}</div><div class="stat-value">${s.value}</div>`;
+                grid.appendChild(el);
+            }
+        }
+
+        function renderSubjectsAnalysis(students){
+            const out = document.getElementById('subjectsArea'); out.innerHTML='';
+            const subjectMap = {};
+            for(const s of students){
+                for(const [sub,mark] of Object.entries(s.subjects)){
+                    if(!subjectMap[sub]) subjectMap[sub]={marks:[],highest:-Infinity,lowest:Infinity};
+                    subjectMap[sub].marks.push(mark);
+                    subjectMap[sub].highest = Math.max(subjectMap[sub].highest, mark);
+                    subjectMap[sub].lowest = Math.min(subjectMap[sub].lowest, mark);
+                }
+            }
+            if(!Object.keys(subjectMap).length) return;
+            const table = document.createElement('table');
+            table.innerHTML = `<thead><tr><th>Subject</th><th>Avg</th><th>Highest</th><th>Lowest</th><th>Count</th></tr></thead>`;
+            const tb = document.createElement('tbody');
+            for(const [sub,data] of Object.entries(subjectMap)){
+                const avg = (data.marks.reduce((a,b)=>a+b,0)/data.marks.length)||0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${sub}</td><td>${avg.toFixed(2)}</td><td>${data.highest}</td><td>${data.lowest}</td><td>${data.marks.length}</td>`;
+                tb.appendChild(tr);
+            }
+            table.appendChild(tb);
+            out.appendChild(table);
+        }
+
+        // Button handlers
+        const parseBtn = document.getElementById('parseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const fileInput = document.getElementById('fileInput');
+        const exportBtn = document.getElementById('exportBtn');
+        let lastStudents = [];
+
+        parseBtn.addEventListener('click',()=>{
+            const txt = document.getElementById('studentData').value;
+            const parsed = parseLines(txt);
+            if(!parsed.length){ document.getElementById('inputMsg').innerHTML='<div class="error">No valid student lines found.</div>'; return; }
+            lastStudents = analyzeStudents(parsed);
+            renderReports(lastStudents);
+            renderStatistics(lastStudents);
+            renderSubjectsAnalysis(lastStudents);
+            exportBtn.disabled = false;
+            document.getElementById('inputMsg').innerHTML='<div class="success">Parsed '+lastStudents.length+' students.</div>';
+        });
+
+        clearBtn.addEventListener('click',()=>{
+            document.getElementById('studentData').value='';
+            document.getElementById('inputMsg').innerHTML='';
+            lastStudents = [];
+            document.getElementById('reportsArea').innerHTML='';
+            document.querySelector('#studentsTable tbody').innerHTML='';
+            document.getElementById('statsGrid').innerHTML='';
+            document.getElementById('subjectsArea').innerHTML='';
+            exportBtn.disabled = true;
+        });
+
+        fileInput.addEventListener('change',e=>{
+            const f = e.target.files[0];
+            if(!f) return;
+            const reader = new FileReader();
+            reader.onload = ev => document.getElementById('studentData').value = ev.target.result;
+            reader.readAsText(f);
+        });
+
+        exportBtn.addEventListener('click',()=>{
+            if(!lastStudents.length) return;
+            const data = JSON.stringify(lastStudents, null, 2);
+            const blob = new Blob([data], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'students.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        });
+
+        // allow pressing Ctrl+Enter in textarea to parse
+        document.getElementById('studentData').addEventListener('keydown', e=>{
+            if(e.ctrlKey && e.key==='Enter') parseBtn.click();
+        });
+    </script>
+</body>
+</html>
