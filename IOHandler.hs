@@ -62,15 +62,15 @@ parseStudents content =
 displayStudentReport :: StudentReport -> IO ()
 displayStudentReport report = do
     let student = reportStudent report
-    putStrLn $ replicate 60 '─'
+    putStrLn $ replicate 60 '-'
     putStrLn $ "Student ID: " ++ studentId student
     putStrLn $ "Name: " ++ studentName student
     putStrLn ""
-    putStrLn "📚 SUBJECTS AND MARKS:"
+    putStrLn "SUBJECTS AND MARKS:"
     -- Display each subject with its name and mark
     forM_ (subjects student) $ \subject ->
-        putStrLn $ "  • " ++ padRight 20 (subjectName subject) ++ 
-                   " → " ++ printf "%.2f" (subjectMark subject)
+        putStrLn $ "  - " ++ padRight 20 (subjectName subject) ++ 
+               ": " ++ printf "%.2f" (subjectMark subject)
     putStrLn ""
     putStrLn $ "Overall Average: " ++ printf "%.2f" (avgMark report) ++ "%"
     putStrLn $ "Overall Grade: " ++ show (grade report)
@@ -78,7 +78,7 @@ displayStudentReport report = do
     putStrLn ""
     putStrLn "Subject-wise Grades:"
     forM_ (subjectWisePerformance report) $ \(subj, mark, g) ->
-        putStrLn $ "  • " ++ padRight 20 subj ++ 
+        putStrLn $ "  - " ++ padRight 20 subj ++ 
                    " Mark: " ++ padLeft 6 (printf "%.2f" mark) ++ 
                    "  Grade: " ++ show g
 
@@ -98,59 +98,59 @@ printf _ d = show d
 -- | Display all student reports
 displayAllReports :: [StudentReport] -> IO ()
 displayAllReports reports = do
-    putStrLn "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn "║              COMPLETE STUDENT REPORTS                      ║"
-    putStrLn "╚════════════════════════════════════════════════════════════╝"
+    putStrLn "\n============================================================"
+    putStrLn "               COMPLETE STUDENT REPORTS                     "
+    putStrLn "============================================================"
     forM_ reports displayStudentReport
-    putStrLn $ replicate 60 '═'
+    putStrLn $ replicate 60 '='
 
 -- | Display class statistics
 displayStatistics :: Statistics -> IO ()
 displayStatistics stats = do
-    putStrLn "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn "║                CLASS STATISTICS                            ║"
-    putStrLn "╚════════════════════════════════════════════════════════════╝"
+    putStrLn "\n============================================================"
+    putStrLn "                   CLASS STATISTICS                         "
+    putStrLn "============================================================"
     putStrLn $ "Total Students:      " ++ show (totalStudents stats)
     putStrLn $ "Class Average:       " ++ printf "%.2f" (average stats) ++ "%"
     putStrLn $ "Highest Average:     " ++ printf "%.2f" (highest stats) ++ "%"
     putStrLn $ "Lowest Average:      " ++ printf "%.2f" (lowest stats) ++ "%"
-    putStrLn $ replicate 60 '═'
+    putStrLn $ replicate 60 '='
 
 -- | Display subject-wise statistics
 displaySubjectStatistics :: [SubjectStatistics] -> IO ()
 displaySubjectStatistics stats = do
-    putStrLn "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn "║            SUBJECT-WISE STATISTICS                         ║"
-    putStrLn "╚════════════════════════════════════════════════════════════╝"
+    putStrLn "\n============================================================"
+    putStrLn "                 SUBJECT-WISE STATISTICS                    "
+    putStrLn "============================================================"
     putStrLn ""
     putStrLn $ padRight 25 "Subject" ++ padLeft 10 "Average" ++ 
                padLeft 10 "Highest" ++ padLeft 10 "Lowest"
-    putStrLn $ replicate 60 '─'
+    putStrLn $ replicate 60 '-'
     forM_ stats $ \s -> do
         putStrLn $ padRight 25 (statSubjectName s) ++ 
                    padLeft 10 (printf "%.2f" (subjectAverage s)) ++
                    padLeft 10 (printf "%.2f" (subjectHighest s)) ++
                    padLeft 10 (printf "%.2f" (subjectLowest s))
-    putStrLn $ replicate 60 '═'
+    putStrLn $ replicate 60 '='
 
 -- | Display grade distribution
 displayGradeDistribution :: [(Grade, Int)] -> IO ()
 displayGradeDistribution dist = do
-    putStrLn "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn "║              GRADE DISTRIBUTION                            ║"
-    putStrLn "╚════════════════════════════════════════════════════════════╝"
+    putStrLn "\n============================================================"
+    putStrLn "                    GRADE DISTRIBUTION                       "
+    putStrLn "============================================================"
     forM_ dist $ \(g, count) -> do
-        let bar = replicate (count * 2) '█'
+        let bar = replicate (count * 2) '='
         putStrLn $ "Grade " ++ show g ++ ": " ++ 
-                   padLeft 3 (show count) ++ " students " ++ bar
+               padLeft 3 (show count) ++ " students " ++ bar
     putStrLn $ replicate 60 '═'
 
 -- | Display top students
 displayTopStudents :: Int -> [StudentReport] -> IO ()
 displayTopStudents n reports = do
-    putStrLn $ "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn $ "║              TOP " ++ show n ++ " STUDENTS                                  ║"
-    putStrLn $ "╚════════════════════════════════════════════════════════════╝"
+    putStrLn $ "\n============================================================"
+    putStrLn $ "                 TOP " ++ show n ++ " STUDENTS                      "
+    putStrLn $ "============================================================"
     let topN = getTopStudents n reports
     forM_ topN $ \report -> do
         let student = reportStudent report
@@ -158,27 +158,27 @@ displayTopStudents n reports = do
                    padRight 30 (studentName student) ++ 
                    " Average: " ++ printf "%.2f" (avgMark report) ++
                    " (Grade: " ++ show (grade report) ++ ")"
-    putStrLn $ replicate 60 '═'
+    putStrLn $ replicate 60 '='
 
 -- | Display students who failed
 displayFailedStudents :: [StudentReport] -> IO ()
 displayFailedStudents reports = do
     let failed = getFailedStudents reports
-    putStrLn $ "\n╔════════════════════════════════════════════════════════════╗"
-    putStrLn $ "║        STUDENTS NEEDING ATTENTION (Grade F)                ║"
-    putStrLn $ "╚════════════════════════════════════════════════════════════╝"
+    putStrLn $ "\n============================================================"
+    putStrLn $ "           STUDENTS NEEDING ATTENTION (Grade F)             "
+    putStrLn $ "============================================================"
     if null failed
-        then putStrLn "✓ Excellent! No students failed."
+        then putStrLn "Excellent! No students failed."
         else forM_ failed $ \report -> do
             let student = reportStudent report
-            putStrLn $ "⚠ " ++ padRight 30 (studentName student) ++ 
+            putStrLn $ "WARNING: " ++ padRight 30 (studentName student) ++ 
                        " ID: " ++ padRight 8 (studentId student) ++ 
                        " Avg: " ++ printf "%.2f" (avgMark report)
-    putStrLn $ replicate 60 '═'
+    putStrLn $ replicate 60 '='
 
 -- | Print error message
 displayError :: String -> IO ()
-displayError err = putStrLn $ "❌ ERROR: " ++ err
+displayError err = putStrLn $ "ERROR: " ++ err
 
 -- | Sample data for testing with subjects
 sampleData :: String

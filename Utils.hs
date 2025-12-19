@@ -17,10 +17,10 @@ calculateAverage xs = sum xs / fromIntegral (length xs)
 -- | Determine grade based on average marks
 determineGrade :: Double -> Grade
 determineGrade avg
-    | avg >= 90 = A
-    | avg >= 75 = B
-    | avg >= 60 = C
-    | avg >= 50 = D
+    | avg >= 75 = A
+    | avg >= 65 = B
+    | avg >= 55 = C
+    | avg >= 35 = S
     | otherwise = F
 
 -- | Find maximum value in a list (recursive implementation)

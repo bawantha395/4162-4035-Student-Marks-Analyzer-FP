@@ -13,23 +13,19 @@ import Control.Monad (when)
 -- | Main menu display
 displayMenu :: IO ()
 displayMenu = do
-    putStrLn "\n╔════════════════════════════════════════════════════════╗"
-    putStrLn "║       STUDENT MARKS ANALYZER SYSTEM                    ║"
-    putStrLn "║       (With Subject-wise Analysis)                     ║"
-    putStrLn "╚════════════════════════════════════════════════════════╝"
-    putStrLn "1. Load sample data"
-    putStrLn "2. Enter student data manually"
-    putStrLn "3. Load from file"
-    putStrLn "4. Exit"
+    putStrLn "\n================================ STUDENT MARKS ANALYZER ================================="
+    putStrLn "                           (With Subject-wise Analysis)"
+    putStrLn "======================================================================================"
+    putStrLn "1. Enter student data manually"
+    putStrLn "2. Load from file"
+    putStrLn "3. Exit"
     putStr "Enter your choice: "
     hFlush stdout
 
 -- | Analysis menu after data is loaded
 displayAnalysisMenu :: IO ()
 displayAnalysisMenu = do
-    putStrLn "\n╔════════════════════════════════════════════════════════╗"
-    putStrLn "║              ANALYSIS OPTIONS                          ║"
-    putStrLn "╚════════════════════════════════════════════════════════╝"
+    putStrLn "\n============================= ANALYSIS OPTIONS ============================="
     putStrLn "1. View all student reports"
     putStrLn "2. View class statistics"
     putStrLn "3. View subject-wise statistics"
@@ -49,7 +45,7 @@ analyzeData csvData = do
     case parseStudents csvData of
         Error err -> displayError err
         Success students -> do
-            putStrLn $ "\n✓ Successfully loaded " ++ show (length students) ++ " students."
+            putStrLn $ "\nSuccessfully loaded " ++ show (length students) ++ " students."
             case processStudents students of
                 Error err -> displayError err
                 Success reports -> do
@@ -128,7 +124,7 @@ findSubjectTopperMenu students = do
     case getSubjectTopper subj students of
         Nothing -> putStrLn $ "No data found for subject: " ++ subj
         Just (student, mark) -> do
-            putStrLn $ "\n🏆 Subject Topper in " ++ subj ++ ":"
+            putStrLn $ "\nSubject Topper in " ++ subj ++ ":"
             putStrLn $ "Student: " ++ studentName student
             putStrLn $ "ID: " ++ studentId student
             putStrLn $ "Mark: " ++ show mark
@@ -184,15 +180,12 @@ mainLoop = do
     choice <- getLine
     case choice of
         "1" -> do
-            putStrLn "\n📂 Loading sample data..."
-            analyzeData sampleData
-        "2" -> do
             csvData <- readStudentManually
             analyzeData csvData
-        "3" -> do
+        "2" -> do
             result <- readFromFile
             analyzeData result
-        "4" -> do
+        "3" -> do
             putStrLn "\n═══════════════════════════════════════════════════════"
             putStrLn "  Thank you for using Student Marks Analyzer!"
             putStrLn "  Goodbye!"
@@ -205,7 +198,7 @@ mainLoop = do
 main :: IO ()
 main = do
     putStrLn "═══════════════════════════════════════════════════════════"
-    putStrLn "          Student Marks Analyzer v2.0"
+    putStrLn "          Student Marks Analyzer"
     putStrLn "      Functional Programming Mini Project"
     putStrLn "      (With Subject-wise Performance Tracking)"
     putStrLn "═══════════════════════════════════════════════════════════"

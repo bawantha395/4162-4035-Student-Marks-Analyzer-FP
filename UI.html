@@ -4,46 +4,135 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Student Marks Analyzer - Web Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root{--bg1:#f6f8ff;--primary:#3b82f6;--accent:#6366f1;--muted:#6b7280;--card:#ffffff;--danger:#ef4444}
         *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
-        .container{max-width:1100px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.25)}
-        .header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:28px;text-align:center}
-        .header h1{font-size:1.8rem;margin-bottom:6px}
-        .content{padding:26px}
-        .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-        .tab{background:transparent;border:0;padding:10px 16px;border-bottom:3px solid transparent;cursor:pointer;color:#555;font-weight:600}
-        .tab.active{color:#1e3a8a;border-bottom-color:#1e3a8a}
+        html,body{height:100%}
+        body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#eef2ff,var(--bg1));min-height:100vh;padding:28px;color:#0f172a}
+        .container{max-width:1200px;margin:0 auto;background:transparent}
+        .app{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.08);}
+        .header{display:flex;align-items:center;gap:16px;padding:26px 28px;background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;margin-bottom:10px}
+        .brand{display:flex;align-items:center;gap:14px}
+        .logo{width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem}
+        .title{font-size:1.15rem;font-weight:700}
+        .subtitle{font-size:0.85rem;opacity:0.92}
+        .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+        .btn{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 6px 18px rgba(99,102,241,0.18)}
+        .btn.secondary{background:#eef2ff;color:var(--accent);box-shadow:none}
+        .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.14)}
+        .content{padding:28px}
+        .tabs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+        .tab{background:transparent;border:0;padding:10px 16px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600}
+        .tab.active{color:var(--accent);background:rgba(99,102,241,0.06);box-shadow:inset 0 -3px 0 rgba(99,102,241,0.14)}
         .tab-content{display:none}
         .tab-content.active{display:block}
-        .input-section{background:#f7f9fb;padding:16px;border-radius:10px;margin-bottom:16px}
-        label{display:block;margin-bottom:6px;color:#333;font-weight:700}
-        textarea,input{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:8px;font-family:inherit}
-        textarea{min-height:140px;font-family:Courier New,monospace}
-        .controls{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-        .btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}
-        .btn.secondary{background:#6c757d}
-        .small{padding:8px 10px;font-size:.9rem}
-        .results{margin-top:14px}
-        .student-card{border:1px solid #eef2ff;border-radius:10px;padding:12px;margin-bottom:12px}
-        .student-header{display:flex;justify-content:space-between;gap:12px;align-items:center}
-        .student-name{font-weight:700}
-        .subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px}
-        .subject-item{background:#fbfdff;padding:8px;border-radius:8px;border-left:4px solid #667eea}
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
-        .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px;border-radius:8px;text-align:center}
-        table{width:100%;border-collapse:collapse;margin-top:12px}
-        th,td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
-        .muted{color:#555}
-        .error{background:#fdecea;color:#7a1f1f;padding:10px;border-radius:8px;margin-top:10px}
-        .sample-format{background:#f8f9fa;padding:10px;border-radius:8px;font-family:Courier New,monospace;margin-top:8px}
+        .input-section{background:#fff;padding:18px;border-radius:10px;margin-bottom:22px;border:1px solid #eef2ff}
+        label{display:block;margin-bottom:6px;color:#111827;font-weight:600}
+        textarea,input,select{width:100%;padding:10px;border:1px solid #e6eefc;border-radius:10px;font-family:inherit}
+        textarea{min-height:160px;font-family:Courier New,monospace}
+        .controls{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+        .controls .small{padding:8px 10px;font-size:.9rem}
+        .results{margin-top:18px}
+        .student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;margin-top:18px}
+        .student-card{background:linear-gradient(180deg,#ffffff,#fbfdff);border-radius:12px;padding:16px;border:1px solid #eef2ff;box-shadow:0 10px 28px rgba(15,23,42,0.06);display:flex;flex-direction:column;justify-content:space-between;min-height:180px;position:relative;overflow:visible;transition:transform .14s ease,box-shadow .14s ease}
+        .student-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(15,23,42,0.08)}
+        .student-top{display:flex;align-items:center;gap:12px}
+        .student-avatar{width:46px;height:46px;border-radius:10px;background:linear-gradient(90deg,rgba(99,102,241,0.12),rgba(59,130,246,0.12));display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:0.95rem}
+        .student-info{flex:1}
+        .student-score{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+        .student-score .score{font-weight:800;color:var(--accent);font-size:1.1rem}
+        .student-body{margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
+        .student-footer{display:flex;justify-content:flex-end;margin-top:12px}
+        .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(99,102,241,0.12);box-shadow:none}
+        .student-card.failed{border-color:rgba(239,68,68,0.18);background:#fff7f7}
+        /* grade color accents */
+        .student-card.grade-A{border-left:6px solid #16a34a}
+        .student-card.grade-B{border-left:6px solid #3b82f6}
+        .student-card.grade-C{border-left:6px solid #f59e0b}
+        .student-card.grade-S{border-left:6px solid #8b5cf6}
+        .student-card.grade-F{border-left:6px solid #ef4444}
+        .grade-badge{position:absolute;top:12px;right:12px;padding:6px 8px;border-radius:12px;font-weight:800;font-size:0.85rem;color:#fff;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+        .grade-badge.grade-A{background:linear-gradient(90deg,#10b981,#059669)}
+        .grade-badge.grade-B{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+        .grade-badge.grade-C{background:linear-gradient(90deg,#f59e0b,#d97706)}
+        .grade-badge.grade-S{background:linear-gradient(90deg,#8b5cf6,#7c3aed)}
+        .grade-badge.grade-F{background:linear-gradient(90deg,#ef4444,#dc2626)}
+        .student-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+        .student-name{font-weight:700;font-size:1rem}
+        .muted{color:var(--muted)}
+        .student-meta{font-weight:700;font-size:1rem;color:var(--accent)}
+        .stat-card{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;padding:14px;border-radius:10px;text-align:center}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}
+        .chart-container{background:#fff;border-radius:10px;padding:12px;min-height:360px;border:1px solid #eef2ff}
+        /* table container spacing */
+        .table-container{margin-top:12px;margin-bottom:14px}
+        /* small vertical spacing polish for helper areas */
+        .sample-format{margin-top:12px;color:var(--muted)}
+        /* hero / intro on first page */
+        .hero{background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;padding:18px;border-radius:12px;margin-bottom:16px;box-shadow:0 10px 30px rgba(59,130,246,0.08)}
+        .hero h2{font-size:1.25rem;margin-bottom:6px}
+        .hero p{opacity:0.95;margin-bottom:8px}
+        .hero .cta{display:inline-block;background:rgba(255,255,255,0.12);padding:8px 12px;border-radius:8px;color:#fff;font-weight:700}
+        /* colorful table styles for statistics and subjects */
+        .color-table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;margin-top:12px}
+        .color-table thead th{padding:12px;text-align:left;color:#fff;background:linear-gradient(90deg,#06b6d4,#3b82f6);font-weight:700}
+        .color-table tbody td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+        .color-table tbody tr:nth-child(even) td{background:linear-gradient(180deg,rgba(255,255,255,0.03),transparent)}
+        .color-table tbody tr:hover td{background:linear-gradient(90deg,rgba(59,130,246,0.08),rgba(99,102,241,0.02))}
+        .color-table .cell-pill{display:inline-block;padding:6px 8px;border-radius:999px;color:#fff;font-weight:700}
+        .color-table .pill-A{background:#16a34a}
+        .color-table .pill-B{background:#3b82f6}
+        .color-table .pill-C{background:#f59e0b}
+        .color-table .pill-S{background:#8b5cf6}
+        .color-table .pill-F{background:#ef4444}
+        .small-bar{height:10px;background:#f1f5f9;border-radius:6px;overflow:hidden}
+        .small-bar > i{display:block;height:100%;background:var(--primary)}
+        table{width:100%;border-collapse:collapse;margin-top:12px;border-radius:8px;overflow:hidden}
+        thead th{background:#fbfdff;position:sticky;top:0;padding:12px;text-align:left;font-weight:700}
+        tbody td{padding:12px;border-bottom:1px solid #f3f4f6}
+        tbody tr:hover{background:#fbfdff}
+        /* table color variants per grade */
+        tbody tr.grade-A{background:linear-gradient(90deg,rgba(16,185,129,0.06),transparent)}
+        tbody tr.grade-B{background:linear-gradient(90deg,rgba(59,130,246,0.04),transparent)}
+        tbody tr.grade-C{background:linear-gradient(90deg,rgba(245,158,11,0.04),transparent)}
+        tbody tr.grade-S{background:linear-gradient(90deg,rgba(139,92,246,0.04),transparent)}
+        tbody tr.grade-F{background:linear-gradient(90deg,rgba(239,68,68,0.04),transparent)}
+        .grade-pill{display:inline-block;padding:6px 8px;border-radius:999px;color:#fff;font-weight:800;font-size:0.85rem}
+        .grade-pill.grade-A{background:linear-gradient(90deg,#10b981,#059669)}
+        .grade-pill.grade-B{background:linear-gradient(90deg,#3b82f6,#2563eb)}
+        .grade-pill.grade-C{background:linear-gradient(90deg,#f59e0b,#d97706)}
+        .grade-pill.grade-S{background:linear-gradient(90deg,#8b5cf6,#7c3aed)}
+        .grade-pill.grade-F{background:linear-gradient(90deg,#ef4444,#dc2626)}
+        .search-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+        .file-input{padding:8px;border-radius:8px;border:1px solid #e6eefc;background:#fff}
+        .topper-card{background:#fff;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #eef2ff}
+        .error{background:#fff5f5;color:var(--danger);padding:10px;border-radius:8px;margin-top:10px;border:1px solid rgba(239,68,68,0.12)}
+        .success{background:#f6fffa;color:#065f46;padding:10px;border-radius:8px;margin-top:10px;border:1px solid rgba(4,120,87,0.08)}
+        .detail-table td, .detail-table th{padding:8px}
+        /* modal */
+        .modal-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:none;align-items:center;justify-content:center;padding:24px;z-index:60}
+        .modal{background:#fff;border-radius:12px;max-width:760px;width:100%;overflow:auto;box-shadow:0 20px 60px rgba(2,6,23,0.4)}
+        .modal .modal-body{padding:18px;display:flex;flex-direction:column;gap:12px}
+        .modal .modal-header{padding:16px 18px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;border-top-left-radius:12px;border-top-right-radius:12px}
+        .modal .modal-header .meta{color:var(--muted);font-weight:600}
+        .modal-chart{min-height:220px;border-radius:8px;padding:8px;border:1px solid #eef2ff;background:linear-gradient(180deg,#ffffff,#fbfdff)}
+        .modal .close-btn{background:transparent;border:0;font-weight:700;cursor:pointer;color:var(--muted)}
+        @media (max-width:720px){.header{flex-direction:column;align-items:flex-start}.header-actions{width:100%;margin-top:10px}}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
+        <div class="app">
         <div class="header">
-            <h1> Student Marks Analyzer</h1>
-            <div class="muted">Functional Programming Project  interactive UI for CSV input</div>
+            <div class="brand">
+                <div class="logo">SMA</div>
+                <div>
+                    <div class="title">Student Marks Analyzer</div>
+                    <div class="subtitle">Functional Programming — Interactive Analysis and Exports</div>
+                </div>
+            </div>
         </div>
 
         <div class="content">
@@ -55,24 +144,36 @@
             </div>
 
             <div id="input" class="tab-content active">
+                <div class="hero">
+                    <h2>Student Marks Analyzer</h2>
+                    <p>Quickly parse CSV-style student marks, view per-student reports, class statistics, and subject-level analytics — all in your browser. Use the <strong>Load Sample</strong> button to try with the included data.</p>
+                    <div><button class="btn secondary" onclick="loadSample()">Load Sample Data</button></div>
+                </div>
                 <div class="input-section">
                     <h3>Enter Student Data</h3>
                     <p class="muted">Format per line: StudentID,Name,Subject1:Mark1,Subject2:Mark2,...</p>
-
+                </div>
+                <div class="input-section">
                     <label for="studentData">Student Data (CSV lines)</label>
-                    <textarea id="studentData" placeholder="S001,Alice John,Math:85,Physics:78,Chemistry:90
-S002,Bob Smith,Math:72,Physics:60,Chemistry:68"></textarea>
+                    <textarea id="studentData" placeholder="Paste CSV lines here">
+S001,Alice Johnson,Mathematics:85,Physics:90,Chemistry:78,Biology:92,English:88
+S002,Bob Smith,Mathematics:72,Physics:68,Chemistry:75,Biology:70,English:73
+S003,Charlie Brown,Mathematics:95,Physics:92,Chemistry:98,Biology:94,English:96
+S004,Diana Prince,Mathematics:88,Physics:85,Chemistry:90,Biology:87,English:89
+S005,Eve Wilson,Mathematics:45,Physics:50,Chemistry:48,Biology:42,English:46
+S006,Frank Miller,Mathematics:65,Physics:70,Chemistry:68,Biology:72,English:66
+S007,Grace Lee,Mathematics:78,Physics:82,Chemistry:80,Biology:85,English:79
+S008,Henry Davis,Mathematics:92,Physics:88,Chemistry:90,Biology:91,English:89
+                    </textarea>
 
                     <div class="sample-format">Example:
-S001,Alice John,Math:85,Physics:78,Chemistry:90
-S002,Bob Smith,Math:72,Physics:60,Chemistry:68
+S001,Alice Johnson,Mathematics:85,Physics:90,Chemistry:78,Biology:92,English:88
                     </div>
 
                     <div class="controls">
-                        <button id="parseBtn" class="btn">Parse & Generate Reports</button>
+                        <button id="parseBtn" class="btn">Parse & Generate</button>
                         <button id="clearBtn" class="btn secondary small">Clear</button>
-                        <input id="fileInput" type="file" accept=".csv" class="small" />
-                        <button id="exportBtn" class="btn small" disabled>Export JSON</button>
+                        <input id="fileInput" type="file" accept=".csv" class="file-input" />
                     </div>
                     <div id="inputMsg"></div>
                 </div>
@@ -80,210 +181,250 @@ S002,Bob Smith,Math:72,Physics:60,Chemistry:68
 
             <div id="reports" class="tab-content">
                 <h3>Student Reports</h3>
-                <div id="reportsArea" class="results"></div>
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                    <input id="searchId" placeholder="Search by ID (e.g. S003)" style="padding:8px;border-radius:6px;border:1px solid #e6e9ee;width:220px" />
+                    <button id="searchBtn" class="btn small">Search</button>
+                    <button id="resetSearchBtn" class="btn secondary small">Reset</button>
+                </div>
                 <div class="table-container">
                     <table id="studentsTable">
-                        <thead><tr><th>Rank</th><th>ID</th><th>Name</th><th>Average</th><th>Grade</th></tr></thead>
+                        <thead><tr><th>Rank</th><th>ID</th><th>Name</th><th>Total</th><th>Average</th><th>Grade</th></tr></thead>
                         <tbody></tbody>
                     </table>
+                </div>
+                <div id="reportsArea" class="results">
+                    <div class="student-grid" id="studentGrid"></div>
                 </div>
             </div>
 
             <div id="statistics" class="tab-content">
                 <h3>Statistics</h3>
                 <div class="stats-grid" id="statsGrid"></div>
+                <h4 style="margin-top:12px">Grade Distribution</h4>
+                <div id="gradeDist"></div>
             </div>
 
             <div id="subjects" class="tab-content">
                 <h3>Subject Analysis</h3>
-                <div id="subjectsArea"></div>
+                <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+                    <div style="flex:1;min-width:320px">
+                            <div class="chart-container"><canvas id="subjectAvgChart" style="width:100%;height:100%;"></canvas></div>
+                    </div>
+                    <div style="width:360px">
+                        <label for="subjectSelect" class="muted">Select Subject for Grade Breakdown</label>
+                        <select id="subjectSelect" style="width:100%;padding:8px;border-radius:6px;border:1px solid #e6e9ee;margin-bottom:8px"></select>
+                        <div class="chart-container"><canvas id="subjectPieChart" style="width:100%;height:100%;"></canvas></div>
+                        <div style="margin-top:8px"><button id="exportSubjectsBtn" class="btn small">Export Subjects CSV</button></div>
+                        <div id="toppersArea" style="margin-top:8px"></div>
+                    </div>
+                </div>
+                <div style="margin-top:12px"><button id="exportStudentsBtn" class="btn small">Export Students CSV</button></div>
+                <div id="subjectsArea" style="margin-top:12px"></div>
             </div>
         </div>
-    </div>
+        </div>
 
-    <script>
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',e=>{
+        <!-- Modal for student details -->
+        <div id="modalOverlay" class="modal-overlay" aria-hidden="true">
+            <div class="modal" role="dialog" aria-modal="true">
+                <div class="modal-header">
+                    <div>
+                        <div id="modalStudentName" style="font-weight:800"></div>
+                        <div id="modalStudentMeta" class="muted"></div>
+                    </div>
+                    <button id="closeModal" class="close-btn">Close ✕</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+
+        <script>
+        // Basic UI wiring: tabs and modal
+        document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
             document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById(btn.dataset.target).classList.add('active');
         }));
 
-        // Utility functions
-        function gradeFromAverage(avg){
-            if(avg>=85) return 'A';
-            if(avg>=70) return 'B';
-            if(avg>=55) return 'C';
-            if(avg>=40) return 'D';
-            return 'F';
+        function openModal(contentHtml, title, meta){
+            document.getElementById('modalBody').innerHTML = contentHtml;
+            document.getElementById('modalStudentName').textContent = title || '';
+            document.getElementById('modalStudentMeta').textContent = meta || '';
+            const overlay = document.getElementById('modalOverlay'); overlay.style.display = 'flex'; overlay.setAttribute('aria-hidden','false');
         }
+        function closeModal(){
+            document.getElementById('modalOverlay').style.display='none';
+            document.getElementById('modalOverlay').setAttribute('aria-hidden','true');
+            // destroy modal chart if present
+            try{ if(window.studentModalChart){ window.studentModalChart.destroy(); window.studentModalChart = null; } }catch(e){}
+        }
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='modalOverlay') closeModal(); });
 
+        // Grades
+        function gradeFromAverage(avg){ if(avg>=75) return 'A'; if(avg>=65) return 'B'; if(avg>=55) return 'C'; if(avg>=35) return 'S'; return 'F'; }
+
+        // Parsing
         function parseLines(text){
             const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
             const students = [];
             for(const line of lines){
-                // allow commas in name by taking first two tokens as id and name
                 const parts = line.split(',').map(p=>p.trim());
                 if(parts.length < 3) continue;
-                const id = parts[0];
-                const name = parts[1];
-                const subjects = {};
-                for(let i=2;i<parts.length;i++){
-                    const p = parts[i];
-                    const m = p.split(':').map(x=>x.trim());
-                    if(m.length!==2) continue;
-                    const subj = m[0];
-                    const mark = Number(m[1]);
-                    if(!Number.isFinite(mark)) continue;
-                    subjects[subj]=mark;
-                }
+                const id = parts[0]; const name = parts[1]; const subjects = {};
+                for(let i=2;i<parts.length;i++){ const m = parts[i].split(':').map(x=>x.trim()); if(m.length!==2) continue; const subj=m[0]; const mark=Number(m[1]); if(!Number.isFinite(mark)) continue; subjects[subj]=mark; }
                 students.push({id,name,subjects});
             }
             return students;
         }
 
-        function analyzeStudents(students){
-            // compute totals, averages, grades
-            for(const s of students){
-                const marks = Object.values(s.subjects);
-                s.total = marks.reduce((a,b)=>a+b,0);
-                s.count = marks.length || 0;
-                s.average = s.count? s.total/s.count : 0;
-                s.grade = gradeFromAverage(s.average);
-            }
-            // rank by average desc
-            students.sort((a,b)=>b.average - a.average);
-            students.forEach((s,i)=>s.rank = i+1);
-            return students;
+        function analyzeStudents(students, sortBy){
+            for(const s of students){ const marks = Object.values(s.subjects); s.total = marks.reduce((a,b)=>a+b,0); s.count = marks.length||0; s.average = s.count? s.total/s.count:0; s.grade = gradeFromAverage(s.average); }
+            if(sortBy === 'name') students.sort((a,b)=>a.name.localeCompare(b.name)); else students.sort((a,b)=>b.average - a.average);
+            students.forEach((s,i)=>s.rank = i+1); return students;
         }
 
+            // global loader so inline onclick handlers work
+            window.loadSample = function(){
+                fetch('students.csv').then(r=>{ if(!r.ok) throw new Error('Unable to fetch students.csv'); return r.text(); }).then(t=>{ const ta = document.getElementById('studentData'); if(ta) ta.value = t; const im = document.getElementById('inputMsg'); if(im) im.innerHTML = '<div class="success">Loaded students.csv</div>'; }).catch(()=>{ const im = document.getElementById('inputMsg'); if(im) im.innerHTML = '<div class="error">Could not load students.csv (serve folder via HTTP).</div>'; });
+            }
+
+        // Render reports (cards + table)
         function renderReports(students){
-            const area = document.getElementById('reportsArea');
-            const tbody = document.querySelector('#studentsTable tbody');
-            area.innerHTML=''; tbody.innerHTML='';
-            for(const s of students){
-                const card = document.createElement('div'); card.className='student-card';
+            const tbody = document.querySelector('#studentsTable tbody'); const grid = document.getElementById('studentGrid'); tbody.innerHTML=''; grid.innerHTML='';
+            students.forEach(s=>{
+                const gradeClass = 'grade-' + (s.grade || '');
+                const card = document.createElement('div'); card.className = 'student-card ' + gradeClass + (s.grade==='F' ? ' failed' : '');
+                const initials = s.name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
                 card.innerHTML = `
-                    <div class="student-header">
-                        <div>
+                    <div class="student-top">
+                        <div class="student-avatar">${initials}</div>
+                        <div class="student-info">
                             <div class="student-name">${s.name}</div>
-                            <div class="muted">${s.id}  Avg: ${s.average.toFixed(2)}  Total: ${s.total}</div>
+                            <div class="muted">ID: ${s.id}</div>
                         </div>
-                        <div class="rank-badge">#${s.rank} ${s.grade}</div>
+                        <div class="student-score">
+                            <div class="score">${s.average.toFixed(0)}</div>
+                            <div class="muted" style="font-size:0.78rem">Avg</div>
+                        </div>
                     </div>
-                    <div class="subjects-grid">
-                        ${Object.entries(s.subjects).map(([k,v])=>`<div class="subject-item"><div class="subject-name">${k}</div><div class="subject-mark">${v}</div></div>`).join('')}
+                    <div class="student-body">
+                        <div> <div style="font-weight:700">Total: ${s.total}</div><div class="muted" style="font-size:0.85rem">Rank: #${s.rank}</div></div>
+                        <div class="muted">Subjects: ${Object.keys(s.subjects).length}</div>
                     </div>
+                    <div class="student-footer">
+                        <button class="btn ghost small" data-id="${s.id}" data-action="view">View</button>
+                    </div>
+                    <div class="grade-badge ${gradeClass}">${s.grade}</div>
                 `;
-                area.appendChild(card);
-
+                grid.appendChild(card);
+                // build table row
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${s.rank}</td><td>${s.id}</td><td>${s.name}</td><td>${s.average.toFixed(2)}</td><td>${s.grade}</td>`;
+                tr.innerHTML = `<td>${s.rank}</td><td>${s.id}</td><td>${s.name}</td><td>${s.total}</td><td><span class="grade-pill grade-${s.grade}">${s.average.toFixed(2)}</span></td><td><span class="grade-pill grade-${s.grade}">${s.grade}</span></td>`;
+                tr.className = 'grade-' + s.grade;
                 tbody.appendChild(tr);
-            }
+            });
+            // attach view handlers
+            document.querySelectorAll('[data-action="view"]').forEach(btn=>btn.addEventListener('click', ()=>{
+                const id = btn.dataset.id; const student = students.find(x=>x.id===id); if(!student) return; showStudentModal(student);
+            }));
         }
 
-        function renderStatistics(students){
-            const grid = document.getElementById('statsGrid'); grid.innerHTML='';
-            if(!students.length) return;
-            const averages = students.map(s=>s.average).sort((a,b)=>a-b);
-            const totalAvg = (averages.reduce((a,b)=>a+b,0)/averages.length)||0;
-            const median = averages.length%2? averages[(averages.length-1)/2] : (averages[averages.length/2-1]+averages[averages.length/2])/2;
-            const highest = Math.max(...averages);
-            const lowest = Math.min(...averages);
-            const passRate = (students.filter(s=>s.grade!=='F').length/students.length)*100;
-
-            const stats = [
-                {label:'Class Average', value: totalAvg.toFixed(2)},
-                {label:'Median', value: median.toFixed(2)},
-                {label:'Highest Avg', value: highest.toFixed(2)},
-                {label:'Lowest Avg', value: lowest.toFixed(2)},
-                {label:'Pass Rate', value: passRate.toFixed(1)+'%'},
-                {label:'Students', value: students.length}
-            ];
-
-            for(const s of stats){
-                const el = document.createElement('div'); el.className='stat-card';
-                el.innerHTML = `<div class="stat-label">${s.label}</div><div class="stat-value">${s.value}</div>`;
-                grid.appendChild(el);
-            }
+        function showStudentModal(student){
+            const rows = Object.entries(student.subjects).map(([k,v])=>`<tr><td>${k}</td><td>${v}</td><td>${gradeFromAverage(v)}</td></tr>`).join('');
+            const canvasId = 'studentChart-' + student.id;
+            const html = `
+                <div style="display:flex;gap:10px;align-items:center;justify-content:space-between">
+                    <div><strong>Average:</strong> ${student.average.toFixed(2)} • <strong>Total:</strong> ${student.total} • <strong>Grade:</strong> ${student.grade}</div>
+                    <div class="muted">Subjects: ${Object.keys(student.subjects).length}</div>
+                </div>
+                <div class="modal-chart"><canvas id="${canvasId}" style="width:100%;height:220px"></canvas></div>
+                <table class="detail-table" style="width:100%"><thead><tr><th>Subject</th><th>Mark</th><th>Grade</th></tr></thead><tbody>${rows}</tbody></table>`;
+            openModal(html, student.name, `ID: ${student.id}`);
+            // allow DOM to render then draw chart
+            setTimeout(()=> renderStudentChart(student, canvasId), 60);
         }
 
-        function renderSubjectsAnalysis(students){
-            const out = document.getElementById('subjectsArea'); out.innerHTML='';
-            const subjectMap = {};
-            for(const s of students){
-                for(const [sub,mark] of Object.entries(s.subjects)){
-                    if(!subjectMap[sub]) subjectMap[sub]={marks:[],highest:-Infinity,lowest:Infinity};
-                    subjectMap[sub].marks.push(mark);
-                    subjectMap[sub].highest = Math.max(subjectMap[sub].highest, mark);
-                    subjectMap[sub].lowest = Math.min(subjectMap[sub].lowest, mark);
-                }
-            }
-            if(!Object.keys(subjectMap).length) return;
-            const table = document.createElement('table');
-            table.innerHTML = `<thead><tr><th>Subject</th><th>Avg</th><th>Highest</th><th>Lowest</th><th>Count</th></tr></thead>`;
-            const tb = document.createElement('tbody');
-            for(const [sub,data] of Object.entries(subjectMap)){
-                const avg = (data.marks.reduce((a,b)=>a+b,0)/data.marks.length)||0;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${sub}</td><td>${avg.toFixed(2)}</td><td>${data.highest}</td><td>${data.lowest}</td><td>${data.marks.length}</td>`;
-                tb.appendChild(tr);
-            }
-            table.appendChild(tb);
-            out.appendChild(table);
+        function renderStudentChart(student, canvasId){
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            try{ if(window.studentModalChart){ window.studentModalChart.destroy(); window.studentModalChart = null; } }catch(e){}
+            const labels = Object.keys(student.subjects);
+            const data = labels.map(k=> student.subjects[k]);
+            const ctx = canvas.getContext('2d');
+            window.studentModalChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Marks', data, fill: true, backgroundColor: 'rgba(59,130,246,0.12)', borderColor: '#3b82f6', tension: 0.3, pointRadius:6, pointBackgroundColor:'#fff', pointBorderColor:'#3b82f6' }]},
+                options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, max:100 }}, plugins:{ legend:{display:false} } }
+            });
         }
 
-        // Button handlers
-        const parseBtn = document.getElementById('parseBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const fileInput = document.getElementById('fileInput');
-        const exportBtn = document.getElementById('exportBtn');
+        function renderStatistics(students){ const grid = document.getElementById('statsGrid'); grid.innerHTML=''; if(!students.length) return; const totalAvg = (students.reduce((a,b)=>a+b.average,0)/students.length)||0; const passRate = (students.filter(s=>s.grade!=='F').length/students.length)*100; const stats = [{label:'Class Average', value: totalAvg.toFixed(2)},{label:'Pass Rate', value: passRate.toFixed(1)+'%'},{label:'Students', value: students.length}]; stats.forEach(s=>{ const el = document.createElement('div'); el.className='stat-card'; el.innerHTML=`<div style="font-weight:700">${s.value}</div><div style="opacity:0.9">${s.label}</div>`; grid.appendChild(el); });
+            // colorful grade summary table
+            const summaryArea = document.getElementById('gradeDist'); // reuse area for table + bars
+            summaryArea.innerHTML = '';
+            const counts = {A:0,B:0,C:0,S:0,F:0}; students.forEach(s=> counts[s.grade] = (counts[s.grade]||0)+1);
+            const tbl = document.createElement('table'); tbl.className = 'color-table';
+            tbl.innerHTML = `<thead><tr><th>Grade</th><th>Count</th><th>Share</th><th>Example</th></tr></thead>`;
+            const tb = document.createElement('tbody'); ['A','B','C','S','F'].forEach(g=>{
+                const row = document.createElement('tr');
+                const share = ((counts[g]/students.length)*100).toFixed(1) + '%';
+                const sample = students.find(s=>s.grade===g); const sampleTxt = sample? sample.name + ' ('+sample.id+')' : '-';
+                row.innerHTML = `<td><span class="cell-pill pill-${g}">${g}</span></td><td>${counts[g]}</td><td>${share}</td><td>${sampleTxt}</td>`;
+                tb.appendChild(row);
+            }); tbl.appendChild(tb); summaryArea.appendChild(tbl);
+            // also show detailed bars below
+            const bars = document.createElement('div'); bars.style.marginTop='12px'; bars.style.marginBottom='6px'; summaryArea.appendChild(bars);
+            ['A','B','C','S','F'].forEach(g=>{ const div = document.createElement('div'); div.style.margin='8px 0'; div.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-weight:700">Grade ${g}</div><div class="muted">${counts[g]} students</div></div><div class="grade-bar" style="height:12px;background:#f1f5f9;border-radius:8px"><div style="width:${Math.round((counts[g]/(students.length||1))*100)}%;height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:8px"></div></div>`; bars.appendChild(div); });
+        }
+
+        function renderGradeDistribution(students){ const container = document.getElementById('gradeDist'); container.innerHTML=''; const counts = {A:0,B:0,C:0,S:0,F:0}; students.forEach(s=> counts[s.grade] = (counts[s.grade]||0)+1); const total = students.length||1; ['A','B','C','S','F'].forEach(g=>{ const row = document.createElement('div'); row.style.margin='10px 0'; row.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-weight:700">Grade ${g}</div><div class="muted">${counts[g]} students</div></div><div class="grade-bar" style="height:12px;background:#f1f5f9;border-radius:8px"><div style="width:${Math.round((counts[g]/total)*100)}%;height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:8px"></div></div>`; container.appendChild(row); }); }
+
+        function renderSubjectsAnalysis(students){ const out = document.getElementById('subjectsArea'); out.innerHTML=''; const subjectMap = {}; students.forEach(s=>{ Object.entries(s.subjects).forEach(([sub,mark])=>{ if(!subjectMap[sub]) subjectMap[sub]={marks:[],entries:[],highest:-Infinity,lowest:Infinity}; subjectMap[sub].marks.push(mark); subjectMap[sub].entries.push({id:s.id,name:s.name,mark}); subjectMap[sub].highest = Math.max(subjectMap[sub].highest, mark); subjectMap[sub].lowest = Math.min(subjectMap[sub].lowest, mark); }); }); if(!Object.keys(subjectMap).length) return; const totalEl = document.createElement('div'); totalEl.className='muted'; totalEl.style.marginBottom='8px'; totalEl.textContent = 'Total students: ' + students.length; out.appendChild(totalEl);
+            const table = document.createElement('table'); table.innerHTML = `<thead><tr><th>Subject</th><th>Avg</th><th>Highest</th><th>Lowest</th><th>Count</th><th>Topper</th><th>Avg bar</th><th>Grade breakdown</th></tr></thead>`; const tb = document.createElement('tbody'); Object.entries(subjectMap).forEach(([sub,data])=>{ const avg = (data.marks.reduce((a,b)=>a+b,0)/data.marks.length)||0; const topEntry = data.entries.reduce((best,e)=> e.mark>best.mark? e:best, data.entries[0]); const breakdown = {A:0,B:0,C:0,S:0,F:0}; data.marks.forEach(m=>{ if(m>=75) breakdown.A++; else if(m>=65) breakdown.B++; else if(m>=55) breakdown.C++; else if(m>=35) breakdown.S++; else breakdown.F++; }); const avgPct = Math.round((avg/100)*100); const avgBar = `<div style="width:140px;background:#f1f5f9;border-radius:6px;padding:3px"><div style="width:${avgPct}%;background:linear-gradient(90deg,var(--primary),var(--accent));height:12px;border-radius:4px"></div></div>`; const gb = `<div style="display:flex;gap:6px;align-items:center"><div style="flex:1"><div class=\"small-bar\"><i style=\"width:${Math.round((breakdown.A/data.marks.length)*100)}%\"></i></div>A:${breakdown.A}</div><div style=\"flex:1\"><div class=\"small-bar\"><i style=\"width:${Math.round((breakdown.B/data.marks.length)*100)}%\"></i></div>B:${breakdown.B}</div><div style=\"flex:1\"><div class=\"small-bar\"><i style=\"width:${Math.round((breakdown.C/data.marks.length)*100)}%\"></i></div>C:${breakdown.C}</div><div style=\"flex:1\"><div class=\"small-bar\"><i style=\"width:${Math.round((breakdown.S/data.marks.length)*100)}%\"></i></div>S:${breakdown.S}</div><div style=\"flex:1\"><div class=\"small-bar\"><i style=\"width:${Math.round((breakdown.F/data.marks.length)*100)}%\"></i></div>F:${breakdown.F}</div></div>`; const tr = document.createElement('tr'); tr.innerHTML = `<td>${sub}</td><td>${avg.toFixed(2)}</td><td>${data.highest}</td><td>${data.lowest}</td><td>${data.marks.length}</td><td>${topEntry.name} (${topEntry.id}) - ${topEntry.mark}</td><td>${avgBar}</td><td>${gb}</td>`; tb.appendChild(tr); }); table.appendChild(tb); out.appendChild(table); renderSubjectCharts(subjectMap); }
+
+        // Charts
+        let subjectAvgChart = null; let subjectPieChart = null; // per-subject charts
+        // modal student chart instance (kept on window for safe global cleanup)
+        window.studentModalChart = null;
+        function renderSubjectCharts(subjectMap){ const ctx = document.getElementById('subjectAvgChart').getContext('2d'); const subjects = Object.keys(subjectMap); const avgs = subjects.map(s=>{ const m=subjectMap[s].marks; return (m.reduce((a,b)=>a+b,0)/m.length)||0; }); if(subjectAvgChart) subjectAvgChart.destroy(); subjectAvgChart = new Chart(ctx,{ type:'bar', data:{ labels:subjects, datasets:[{ label:'Average mark', data:avgs, backgroundColor: 'rgba(99,102,241,0.85)'}]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, max:100 }}} }); const sel = document.getElementById('subjectSelect'); sel.innerHTML=''; subjects.forEach(s=>{ const opt = document.createElement('option'); opt.value=s; opt.textContent=s; sel.appendChild(opt); }); if(subjects.length) renderSubjectPie(subjectMap, subjects[0]); sel.onchange = ()=> renderSubjectPie(subjectMap, sel.value); }
+
+        function renderSubjectPie(subjectMap, subject){ const data = subjectMap[subject]; if(!data) return; const breakdown = {A:0,B:0,C:0,S:0,F:0}; data.marks.forEach(m=>{ if(m>=75) breakdown.A++; else if(m>=65) breakdown.B++; else if(m>=55) breakdown.C++; else if(m>=35) breakdown.S++; else breakdown.F++; }); const ctx = document.getElementById('subjectPieChart').getContext('2d'); const labels=['A','B','C','S','F']; const values = labels.map(l=>breakdown[l]); if(subjectPieChart) subjectPieChart.destroy(); subjectPieChart = new Chart(ctx,{ type:'pie', data:{ labels, datasets:[{ data:values, backgroundColor:['#16a34a','#3b82f6','#f59e0b','#8b5cf6','#ef4444']}]}, options:{ responsive:true, maintainAspectRatio:false } }); const top = data.entries.reduce((best,e)=> e.mark>best.mark? e:best, data.entries[0]); document.getElementById('toppersArea').innerHTML = `<div class="topper-card"><strong>Topper: </strong> ${top.name} (${top.id}) — ${top.mark}</div>`; }
+
+        // handlers — attach after DOM ready to avoid missing elements
         let lastStudents = [];
+        window.addEventListener('DOMContentLoaded', ()=>{
+            const parseBtn = document.getElementById('parseBtn'); const clearBtn = document.getElementById('clearBtn'); const fileInput = document.getElementById('fileInput');
+            if(!parseBtn){ console.error('parseBtn not found'); return; }
 
-        parseBtn.addEventListener('click',()=>{
-            const txt = document.getElementById('studentData').value;
-            const parsed = parseLines(txt);
-            if(!parsed.length){ document.getElementById('inputMsg').innerHTML='<div class="error">No valid student lines found.</div>'; return; }
-            lastStudents = analyzeStudents(parsed);
-            renderReports(lastStudents);
-            renderStatistics(lastStudents);
-            renderSubjectsAnalysis(lastStudents);
-            exportBtn.disabled = false;
-            document.getElementById('inputMsg').innerHTML='<div class="success">Parsed '+lastStudents.length+' students.</div>';
-        });
+            parseBtn.addEventListener('click',()=>{
+                const studentEl = document.getElementById('studentData');
+                if(!studentEl){ console.error('studentData textarea not found'); const im = document.getElementById('inputMsg'); if(im) im.innerHTML = '<div class="error">Input area missing. Reload the page.</div>'; return; }
+                const txt = studentEl.value; const parsed = parseLines(txt); if(!parsed.length){ const im = document.getElementById('inputMsg'); if(im) im.innerHTML='<div class="error">No valid student lines found.</div>'; return; }
+                const sortEl = document.getElementById('sortSelect'); const sortBy = sortEl? sortEl.value : 'avg';
+                lastStudents = analyzeStudents(parsed, sortBy); renderReports(lastStudents); renderStatistics(lastStudents); renderSubjectsAnalysis(lastStudents); const im = document.getElementById('inputMsg'); if(im) im.innerHTML='<div class="success">Parsed '+lastStudents.length+' students.</div>';
+            });
 
-        clearBtn.addEventListener('click',()=>{
-            document.getElementById('studentData').value='';
-            document.getElementById('inputMsg').innerHTML='';
-            lastStudents = [];
-            document.getElementById('reportsArea').innerHTML='';
-            document.querySelector('#studentsTable tbody').innerHTML='';
-            document.getElementById('statsGrid').innerHTML='';
-            document.getElementById('subjectsArea').innerHTML='';
-            exportBtn.disabled = true;
-        });
+            if(clearBtn) clearBtn.addEventListener('click',()=>{ const studentEl = document.getElementById('studentData'); if(studentEl) studentEl.value=''; const im = document.getElementById('inputMsg'); if(im) im.innerHTML=''; lastStudents=[]; const ra = document.getElementById('reportsArea'); if(ra) ra.innerHTML=''; const tbody = document.querySelector('#studentsTable tbody'); if(tbody) tbody.innerHTML=''; const sg = document.getElementById('statsGrid'); if(sg) sg.innerHTML=''; const sa = document.getElementById('subjectsArea'); if(sa) sa.innerHTML=''; });
 
-        fileInput.addEventListener('change',e=>{
-            const f = e.target.files[0];
-            if(!f) return;
-            const reader = new FileReader();
-            reader.onload = ev => document.getElementById('studentData').value = ev.target.result;
-            reader.readAsText(f);
-        });
+            if(fileInput) fileInput.addEventListener('change',e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev => { const studentEl = document.getElementById('studentData'); if(studentEl) studentEl.value = ev.target.result; }; reader.readAsText(f); });
 
-        exportBtn.addEventListener('click',()=>{
-            if(!lastStudents.length) return;
-            const data = JSON.stringify(lastStudents, null, 2);
-            const blob = new Blob([data], {type:'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'students.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-        });
+            // Load sample (header)
+            const loadBtn = document.getElementById('loadSampleBtnTop'); if(loadBtn) loadBtn.addEventListener('click', loadSample);
 
-        // allow pressing Ctrl+Enter in textarea to parse
-        document.getElementById('studentData').addEventListener('keydown', e=>{
-            if(e.ctrlKey && e.key==='Enter') parseBtn.click();
+            // Search
+            const searchBtn = document.getElementById('searchBtn'); const resetBtn = document.getElementById('resetSearchBtn');
+            if(searchBtn) searchBtn.addEventListener('click', ()=>{ const id = document.getElementById('searchId').value.trim(); if(!id) return; const found = lastStudents.filter(s=>s.id===id); if(found.length){ renderReports(found); renderStatistics(found); renderSubjectsAnalysis(found); } else document.getElementById('reportsArea').innerHTML = '<div class="error">No student found with ID: '+id+'</div>'; });
+            if(resetBtn) resetBtn.addEventListener('click', ()=>{ if(lastStudents.length){ renderReports(lastStudents); renderStatistics(lastStudents); renderSubjectsAnalysis(lastStudents); } document.getElementById('searchId').value=''; });
+
+            // CSV export buttons
+            const exportStudentsBtn = document.getElementById('exportStudentsBtn'); if(exportStudentsBtn) exportStudentsBtn.addEventListener('click', ()=>{ if(!lastStudents.length) return alert('No data to export'); const subjectsSet = new Set(); lastStudents.forEach(s=> Object.keys(s.subjects).forEach(sub=>subjectsSet.add(sub))); const subjects = Array.from(subjectsSet); const header = ['Rank','ID','Name','Total','Average','Grade', ...subjects]; const rows=[header.join(',')]; lastStudents.forEach(s=>{ const row=[s.rank,s.id,'"'+s.name.replace(/"/g,'""')+'"',s.total,s.average.toFixed(2),s.grade]; subjects.forEach(sub=> row.push(s.subjects[sub] !== undefined ? s.subjects[sub] : '')); rows.push(row.join(',')); }); const blob = new Blob([rows.join('\n')], {type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='students_report.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); });
+
+            const exportSubjectsBtn = document.getElementById('exportSubjectsBtn'); if(exportSubjectsBtn) exportSubjectsBtn.addEventListener('click', ()=>{ if(!lastStudents.length) return alert('No data to export'); const subjectMap = {}; lastStudents.forEach(s=>{ Object.entries(s.subjects).forEach(([sub,mark])=>{ if(!subjectMap[sub]) subjectMap[sub]={marks:[],entries:[]}; subjectMap[sub].marks.push(mark); subjectMap[sub].entries.push({id:s.id,name:s.name,mark}); }); }); const hdr=['Subject','Average','Highest','Lowest','Count','TopperName','TopperID','TopperMark','A_count','B_count','C_count','S_count','F_count']; const out=[hdr.join(',')]; Object.entries(subjectMap).forEach(([sub,data])=>{ const avg=(data.marks.reduce((a,b)=>a+b,0)/data.marks.length)||0; const highest=Math.max(...data.marks); const lowest=Math.min(...data.marks); const top=data.entries.reduce((best,e)=> e.mark>best.mark? e:best, data.entries[0]); const breakdown={A:0,B:0,C:0,S:0,F:0}; data.marks.forEach(m=>{ if(m>=75) breakdown.A++; else if(m>=65) breakdown.B++; else if(m>=55) breakdown.C++; else if(m>=35) breakdown.S++; else breakdown.F++; }); const row=[sub,avg.toFixed(2),highest,lowest,data.marks.length,'"'+top.name.replace(/"/g,'""')+'"',top.id,top.mark,breakdown.A,breakdown.B,breakdown.C,breakdown.S,breakdown.F]; out.push(row.join(',')); }); const blob=new Blob([out.join('\n')], {type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='subjects_report.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); });
+
+            // keyboard shortcut
+            const studentDataEl = document.getElementById('studentData'); if(studentDataEl) studentDataEl.addEventListener('keydown', e=>{ if(e.ctrlKey && e.key==='Enter') parseBtn.click(); });
         });
     </script>
 </body>

@@ -2,15 +2,13 @@
 **Functional Programming Mini Project**
 
 ## Group Members
-- Member 1: [Your Name] - [ID]
-- Member 2: [Your Name] - [ID]
-- Member 3: [Your Name] - [ID]
-- Member 4: [Your Name] - [ID]
+- Member 1: [R.M.B.T.M. Rathnayake] - [EG/2020/4162]
+- Member 2: [D.P.S.T. Kumari] - [EG/2020/4035]
 
 ## Project Description
 
 ### Real-World Scenario
-Educational institutions process thousands of student records each semester. Teachers and administrators need to:
+Educational institutions process thousands of student records each year. Teachers and administrators need to:
 - Calculate grades and rankings automatically
 - Identify students needing academic support
 - Generate statistical reports for accreditation
@@ -51,16 +49,17 @@ sudo apt-get install ghc
 # On macOS:
 brew install ghc
 
-# On Windows:
-# Download from https://www.haskell.org/platform/
+# On Windows (recommended):
+# Use `ghcup` to install GHC, GHCi and cabal. See https://www.haskell.org/ghcup/
+# Alternatively download installers from the Haskell website.
 ```
 
 ## How to Run
 
 ### Method 1: Using GHCi (Recommended for demonstration)
 ```bash
-# Navigate to project directory
-cd student-marks-analyzer
+# Navigate to the project directory (the folder containing `Main.hs`)
+cd path/to/project-directory
 
 # Load the main module
 ghci Main.hs
@@ -75,7 +74,11 @@ main
 ghc -o analyzer Main.hs
 
 # Run the executable
+# On macOS/Linux:
 ./analyzer
+# On Windows (PowerShell/Cmd):
+.\analyzer.exe
+analyzer.exe
 ```
 
 ## Usage Instructions
@@ -107,6 +110,28 @@ ghc -o analyzer Main.hs
 3. Select option `3` (Load from file)
 4. Enter filename (e.g., `students.csv`)
 
+### Web UI (Static preview)
+If you'd like to preview the browser-based UI (`UI.html`) included with this repository, you can serve the project folder with Python's simple HTTP server and open the page in your browser.
+
+Run this from the project root (where `UI.html` and `students.csv` live):
+
+```bash
+# Start a simple HTTP server on port 8000
+python -m http.server 8000
+```
+
+Or on some Windows setups where `python` maps to Python 2, use:
+
+```powershell
+py -3 -m http.server 8000
+```
+
+Then open the UI in your browser:
+
+http://localhost:8000/UI.html
+
+Tip: Press Ctrl+C in the terminal to stop the server.
+
 ## Sample Input/Output
 
 ### Sample Input (CSV Format with Subjects)
@@ -116,6 +141,9 @@ S002,Bob Smith,Mathematics:72,Physics:68,Chemistry:75,Biology:70,English:73
 S003,Charlie Brown,Mathematics:95,Physics:92,Chemistry:98,Biology:94,English:96
 S004,Diana Prince,Mathematics:88,Physics:85,Chemistry:90,Biology:87,English:89
 S005,Eve Wilson,Mathematics:45,Physics:50,Chemistry:48,Biology:42,English:46
+S006,Frank Miller,Mathematics:65,Physics:70,Chemistry:68,Biology:72,English:66
+S007,Grace Lee,Mathematics:78,Physics:82,Chemistry:80,Biology:85,English:79
+S008,Henry Davis,Mathematics:92,Physics:88,Chemistry:90,Biology:91,English:89
 ```
 **Format:** `StudentID,StudentName,Subject1:Mark1,Subject2:Mark2,...`
 
@@ -158,7 +186,7 @@ Physics                    81.13     92.00     50.00
 Grade A:   2 students ████
 Grade B:   2 students ████
 Grade C:   0 students 
-Grade D:   3 students ██████
+Grade S:   1 students ██
 Grade F:   1 students ██
 ════════════════════════════════════════════════════════════
 ```
@@ -179,11 +207,16 @@ calculateAverage xs = sum xs / fromIntegral (length xs)
 Data structures cannot be modified after creation, preventing bugs from shared mutable state.
 
 ```haskell
--- Student and marks are immutable
+-- Student and subjects are immutable
+data Subject = Subject
+    { subjectName :: String
+    , subjectMark :: Double
+    } deriving (Show, Eq)
+
 data Student = Student
     { studentId :: String
     , studentName :: String
-    , marks :: [Double]
+    , subjects :: [Subject]
     } deriving (Show, Eq)
 ```
 
@@ -208,9 +241,10 @@ Functions that take other functions as parameters or return functions.
 filterByGrade :: Grade -> [StudentReport] -> [StudentReport]
 filterByGrade targetGrade = filter (\r -> grade r == targetGrade)
 
--- Map transformation
+-- Map transformation (update subject marks)
 transformMarks :: (Double -> Double) -> Student -> Student
-transformMarks f student = student { marks = map f (marks student) }
+transformMarks f student = student { subjects = map update (subjects student) }
+    where update s = s { subjectMark = f (subjectMark s) }
 ```
 
 ### 5. **Algebraic Data Types (ADTs)**
@@ -218,7 +252,7 @@ Custom types that model domain concepts precisely.
 
 ```haskell
 -- Grade as ADT
-data Grade = A | B | C | D | F deriving (Show, Eq, Ord)
+data Grade = A | B | C | S | F deriving (Show, Eq, Ord)
 
 -- Result type for error handling
 data Result a = Success a | Error String
@@ -230,10 +264,10 @@ Elegant way to handle different cases of data structures.
 ```haskell
 determineGrade :: Double -> Grade
 determineGrade avg
-    | avg >= 90 = A
-    | avg >= 75 = B
-    | avg >= 60 = C
-    | avg >= 50 = D
+    | avg >= 75 = A
+    | avg >= 65 = B
+    | avg >= 55 = C
+    | avg >= 35 = S
     | otherwise = F
 ```
 
@@ -271,7 +305,7 @@ calculateClassStatistics :: [StudentReport] -> Result Statistics
 
 ## File Structure
 ```
-student-marks-analyzer/
+project root/
 │
 ├── Main.hs              # Entry point, IO handling, menu system
 ├── DataTypes.hs         # Custom data type definitions
@@ -279,7 +313,6 @@ student-marks-analyzer/
 ├── IOHandler.hs         # Input/output operations
 ├── Utils.hs             # Utility functions (calculations, sorting)
 ├── README.md            # This file
-├── report.pdf           # Technical report (3-4 pages)
 └── students.csv         # Sample data file (optional)
 ```
 
@@ -291,11 +324,11 @@ student-marks-analyzer/
 :load Main
 
 -- Test individual functions
-let student = Student "S001" "John" [85, 90, 78]
-calculateAverage (marks student)  -- Returns: 84.33...
+let student = Student "S001" "John" [Subject "Mathematics" 85, Subject "Physics" 90, Subject "Chemistry" 78]
+calculateAverage (getMarks student)  -- Returns: 84.33...
 
 -- Test grade determination
-determineGrade 85  -- Returns: B
+determineGrade 85  -- Returns: A
 
 -- Test with sample data
 let Right students = parseStudents sampleData

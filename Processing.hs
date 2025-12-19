@@ -82,7 +82,7 @@ getStudentsByGradeRange grades reports =
 -- | Calculate grade distribution (returns list of tuples)
 calculateGradeDistribution :: [StudentReport] -> [(Grade, Int)]
 calculateGradeDistribution reports = 
-    map (\g -> (g, countByGrade g reports)) [A, B, C, D, F]
+    map (\g -> (g, countByGrade g reports)) [A, B, C, S, F]
 
 -- | Find students above average (demonstrates function composition)
 getAboveAverageStudents :: [StudentReport] -> Statistics -> [StudentReport]
@@ -102,7 +102,7 @@ generatePerformanceSummary report =
             A -> "Excellent"
             B -> "Good"
             C -> "Average"
-            D -> "Below Average"
+            S -> "Below Average"
             F -> "Needs Improvement"
         weakest = findWeakestSubject student
         strongest = findStrongestSubject student

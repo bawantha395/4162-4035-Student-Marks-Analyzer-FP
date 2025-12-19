@@ -17,7 +17,7 @@ data Student = Student
     } deriving (Show, Eq)
 
 -- | Grade classification based on average marks
-data Grade = A | B | C | D | F deriving (Show, Eq, Ord)
+data Grade = A | B | C | S | F deriving (Show, Eq, Ord)
 
 -- | Statistical summary for analysis
 data Statistics = Statistics
