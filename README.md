@@ -56,7 +56,7 @@ brew install ghc
 
 ## How to Run
 
-### Method 1: Using GHCi (Recommended for demonstration)
+### Method 1: Using GHCi (Recommended)
 ```bash
 # Navigate to the project directory (the folder containing `Main.hs`)
 cd path/to/project-directory
@@ -83,14 +83,9 @@ analyzer.exe
 
 ## Usage Instructions
 
-### Option 1: Load Sample Data (Quickest)
+### Option 1: Enter Data Manually
 1. Run the program
-2. Select option `1` (Load sample data)
-3. Choose from analysis menu options
-
-### Option 2: Enter Data Manually
-1. Run the program
-2. Select option `2` (Enter student data manually)
+2. Select option `1` (Enter student data manually)
 3. Enter number of students
 4. Input details for each student:
    - Student ID (e.g., S001)
@@ -98,7 +93,7 @@ analyzer.exe
    - Subjects with marks in format: `Subject1:Mark1,Subject2:Mark2,...`
    - Example: `Mathematics:85,Physics:90,Chemistry:78,Biology:92,English:88`
 
-### Option 3: Load from File
+### Option 2: Load from File
 1. Create a CSV file (e.g., `students.csv`) with format:
    ```
    S001,Alice Johnson,Mathematics:85,Physics:90,Chemistry:78,Biology:92,English:88
@@ -107,7 +102,7 @@ analyzer.exe
    ```
    **Format:** Each line contains: `StudentID,Name,Subject1:Mark1,Subject2:Mark2,...`
 2. Run the program
-3. Select option `3` (Load from file)
+3. Select option `2` (Load from file)
 4. Enter filename (e.g., `students.csv`)
 
 ### Web UI (Static preview)
