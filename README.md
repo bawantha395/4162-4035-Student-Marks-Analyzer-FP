@@ -344,12 +344,10 @@ length reports  -- Shows number of students
 
 ## Possible Extensions
 
-- 📊 Export reports to PDF/Excel
-- 📈 Add data visualization (charts/graphs)
+- 📊 Export each student reports to PDF/Excel
 - 🔄 Support multiple semesters/courses
-- 🌐 Web interface using Servant/Yesod
 - ⚡ Parallel processing for large datasets using `parallel` library
-- 💾 Database integration (PostgreSQL with Hasql)
+- 💾 Database integration
 - 📧 Email notifications for at-risk students
 - 🎯 Predictive analytics using machine learning
 
@@ -357,8 +355,6 @@ length reports  -- Shows number of students
 - Base Haskell libraries (no external packages required)
 - GHC 8.10+
 
-## License
-MIT License - Educational Project
 
 ## Contact
 For questions or issues, please contact group members.
